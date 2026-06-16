@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="movie-detail-container">
+    <header class="detail-header">
+        <h1>{{ movie.primaryTitle }} <span class="year">({{ movie.startYear }})</span></h1>
+        <div class="main-stats">
+            <span class="badge-rating">★ {{ movie.rating }}</span>
+            <span class="votes">{{ movie.votes }} votes</span>
+            <span class="runtime">{{ movie.runtimeMinutes }} min</span>
+        </div>
+    </header>
+
+    <div class="detail-grid">
+        <div class="main-info">
+            <section class="card">
+                <h3>🎬 Réalisation & Scénario</h3>
+                <p><strong>Réalisé par :</strong> 
+                    {% for d in directors %}{{ d.primaryName }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                </p>
+                <p><strong>Écrit par :</strong> 
+                    {% for w in writers %}{{ w.primaryName }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                </p>
+            </section>
+
+            <section class="card">
+                <h3>👥 Casting complet</h3>
+                <ul class="cast-list">
+                    {% for actor in casting %}
+                    <li><strong>{{ actor.name }}</strong> : {{ actor.role }}</li>
+                    {% empty %}
+                    <li>Aucune information sur le casting.</li>
+                    {% endfor %}
+                </ul>
+            </section>
+        </div>
+
+        <div class="side-info">
+            <section class="card">
+                <h3>🌍 Titres par région</h3>
+                <table class="alt-titles">
+                    {% for alt in alt_titles %}
+                    <tr>
+                        <td><span class="region">{{ alt.region }}</span></td>
+                        <td>{{ alt.title }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </section>
+
+            <section class="card">
+                <h3>🍿 Films similaires</h3>
+                <ul class="similar-list">
+                    {% for sim in similar_movies %}
+                    <li>
+                        <a href="{% url 'detail' sim.movie_id %}">{{ sim.primaryTitle }}</a> 
+                        <small>({{ sim.startYear }})</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}

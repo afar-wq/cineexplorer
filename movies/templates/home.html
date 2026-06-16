@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <header class="p-5 mb-4 bg-dark text-white rounded-3 shadow">
+        <div class="container-fluid py-5 text-center">
+            <h1 class="display-5 fw-bold mb-4">CineExplorer Dashboard</h1>
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <form action="{% url 'search' %}" method="get" class="d-flex shadow-sm">
+                        <input type="text" name="q" class="form-control form-control-lg border-0 rounded-start" 
+                               placeholder="Recherche rapide d'un film..." required>
+                        <button type="submit" class="btn btn-warning btn-lg rounded-end px-4">🔍</button>
+                    </form>
+                    <div id="search-feedback" class="form-text text-white-50 mt-2">Plus de 36 000 titres indexés</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="row text-center mb-5">
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm bg-primary text-white py-4 h-100">
+                <h2 class="display-6 fw-bold">{{ stats.total_movies }}</h2>
+                <p class="mb-0 opacity-75">Films Indexés</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm bg-success text-white py-4 h-100">
+                <h2 class="display-6 fw-bold">{{ stats.total_persons }}</h2>
+                <p class="mb-0 opacity-75">Acteurs & Actrices</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm bg-info text-white py-4 h-100">
+                <h2 class="display-6 fw-bold">{{ stats.total_directors }}</h2>
+                <p class="mb-0 opacity-75">Professionnels</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <section class="col-lg-7">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3">
+                    <h3 class="card-title h5 mb-0 fw-bold">🏆 Top 10 des mieux notés</h3>
+                </div>
+                <div class="table-responsive p-3">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Rating</th>
+                                <th>Titre</th>
+                                <th class="text-end">Année</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for movie in top_10 %}
+                            <tr>
+                                <td><span class="badge bg-warning text-dark">★ {{ movie.rating }}</span></td>
+                                <td><a href="{% url 'detail' movie.movie_id %}" class="text-decoration-none text-dark fw-semibold">{{ movie.primaryTitle }}</a></td>
+                                <td class="text-end text-muted"><small>{{ movie.startYear }}</small></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="col-lg-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3">
+                    <h3 class="card-title h5 mb-0 fw-bold">🎲 Suggestions aléatoires</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% for movie in random_suggestions %}
+                        <div class="col-12">
+                            <div class="p-3 border rounded-3 bg-light">
+                                <h6 class="mb-1 text-truncate">{{ movie.primaryTitle }}</h6>
+                                <p class="small text-muted mb-2">{{ movie.startYear }} | {{ movie.genres|default:"Movie" }}</p>
+                                <a href="{% url 'detail' movie.movie_id %}" class="btn btn-sm btn-outline-dark">Détails</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+    // Feedback utilisateur lors de la recherche
+    document.querySelector('form').addEventListener('submit', function() {
+        const btn = this.querySelector('button');
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+        btn.disabled = true;
+    });
+</script>
+{% endblock %}

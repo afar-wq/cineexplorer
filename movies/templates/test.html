@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Diagnostic Connexion MongoDB</h1>
+    <div style="padding: 20px; border: 2px solid #4CAF50; border-radius: 10px; background-color: #e8f5e9;">
+        <p><strong>Statut :</strong> {{ status }}</p>
+        <p><strong>Nombre de documents trouvés :</strong> {{ count }}</p>
+    </div>
+    <br>
+    <a href="{% url 'movie_list' %}">Aller à la liste des films</a>
+{% endblock %}

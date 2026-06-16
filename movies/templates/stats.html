@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">Analyses du Catalogue IMDb</h1>
+
+
+<div class="stats-grid">
+    <div class="chart-row">
+        <div class="chart-box card">
+            <h3>Top 10 Genres</h3>
+            <canvas id="genreChart"></canvas>
+        </div>
+        <div class="chart-box card">
+            <h3>Évolution de la production</h3>
+            <canvas id="decadeChart"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-row">
+        <div class="chart-box card">
+            <h3>Distribution des Notes (0-10)</h3>
+            <canvas id="ratingChart"></canvas>
+        </div>
+        <div class="chart-box card">
+            <h3>Acteurs les plus prolifiques</h3>
+            <canvas id="actorChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const commonOptions = { responsive: true, plugins: { legend: { display: false } } };
+
+    // Genres (Bar)
+    new Chart(document.getElementById('genreChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ genre_labels|safe }},
+            datasets: [{ data: {{ genre_counts|safe }}, backgroundColor: '#3498db' }]
+        },
+        options: commonOptions
+    });
+
+    // Décennies (Line)
+    new Chart(document.getElementById('decadeChart'), {
+        type: 'line',
+        data: {
+            labels: {{ decade_labels|safe }},
+            datasets: [{ data: {{ decade_counts|safe }}, borderColor: '#e74c3c', fill: true, backgroundColor: 'rgba(231, 76, 60, 0.1)' }]
+        },
+        options: commonOptions
+    });
+
+    // Notes (Bar/Histogram)
+    new Chart(document.getElementById('ratingChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ rating_labels|safe }},
+            datasets: [{ data: {{ rating_counts|safe }}, backgroundColor: '#f1c40f' }]
+        },
+        options: { ...commonOptions, scales: { x: { title: { display: true, text: 'Note' } } } }
+    });
+
+    // Acteurs (Horizontal Bar)
+    new Chart(document.getElementById('actorChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ actor_labels|safe }},
+            datasets: [{ data: {{ actor_counts|safe }}, backgroundColor: '#2ecc71' }]
+        },
+    });
+</script>
+{% endblock %}

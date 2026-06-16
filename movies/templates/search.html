@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="search-container">
+    <h1>Résultats pour "{{ query }}"</h1>
+    <p class="text-muted">{{ total_found }} résultats trouvés</p>
+
+    <div class="search-results-grid">
+        <section class="results-column">
+            <h2>🎬 Films</h2>
+            <div class="list-group">
+                {% for movie in movies %}
+                <a href="{% url 'detail' movie.movie_id %}" class="result-item">
+                    <div class="item-info">
+                        <strong>{{ movie.primaryTitle }}</strong>
+                        <span>{{ movie.startYear }}</span>
+                    </div>
+                </a>
+                {% empty %}
+                <p>Aucun film trouvé.</p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="results-column">
+            <h2>👤 Personnes</h2>
+            <div class="list-group">
+                {% for person in persons %}
+                <div class="result-item no-link">
+                    <div class="item-info">
+                        <strong>{{ person.primaryName }}</strong>
+                        <span>{{ person.birthYear|default:"-" }}</span>
+                    </div>
+                </div>
+                {% empty %}
+                <p>Aucune personne trouvée.</p>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

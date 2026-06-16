@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active" aria-current="page">Liste des films</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <aside class="col-lg-3 mb-4">
+        <div class="card shadow-sm border-0 p-3">
+            <h5 class="card-title border-bottom pb-2 mb-3">Filtres</h5>
+            <form method="get">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Genre</label>
+                    <select name="genre" class="form-select form-select-sm">
+                        <option value="">Tous les genres</option>
+                        {% for g in all_genres %}
+                        <option value="{{ g }}" {% if g == current_genre %}selected{% endif %}>{{ g }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Années</label>
+                    <div class="input-group input-group-sm">
+                        <input type="number" name="year_min" class="form-control" placeholder="Min" value="{{ request.GET.year_min }}">
+                        <input type="number" name="year_max" class="form-control" placeholder="Max" value="{{ request.GET.year_max }}">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Trier par</label>
+                    <select name="sort" class="form-select form-select-sm mb-2">
+                        <option value="primaryTitle" {% if request.GET.sort == 'primaryTitle' %}selected{% endif %}>Titre</option>
+                        <option value="startYear" {% if request.GET.sort == 'startYear' %}selected{% endif %}>Année</option>
+                    </select>
+                    <select name="order" class="form-select form-select-sm">
+                        <option value="asc" {% if request.GET.order == 'asc' %}selected{% endif %}>Croissant</option>
+                        <option value="desc" {% if request.GET.order == 'desc' %}selected{% endif %}>Décroissant</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-warning btn-sm w-100 fw-bold">Appliquer les filtres</button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="col-lg-9">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+            {% for movie in page_obj %}
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body position-relative">
+                        <span class="badge bg-dark position-absolute top-0 end-0 m-2">★ {{ movie.rating }}</span>
+                        <h6 class="card-title mt-3 text-truncate" title="{{ movie.primaryTitle }}">
+                            {{ movie.primaryTitle }}
+                        </h6>
+                        <p class="card-text small text-muted">{{ movie.startYear }}</p>
+                        <a href="{% url 'detail' movie.movie_id %}" class="btn btn-outline-dark btn-sm w-100">Voir la fiche</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <p class="text-muted">Aucun film ne correspond à vos critères.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <nav aria-label="Page navigation" class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link text-dark" href="?page=1&genre={{ current_genre|default:'' }}&sort={{ request.GET.sort }}&order={{ request.GET.order }}">Début</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link text-dark" href="?page={{ page_obj.previous_page_number }}&genre={{ current_genre|default:'' }}&sort={{ request.GET.sort }}&order={{ request.GET.order }}">Précédent</a>
+                </li>
+                {% endif %}
+
+                <li class="page-item disabled">
+                    <span class="page-link text-muted">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                </li>
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link text-dark" href="?page={{ page_obj.next_page_number }}&genre={{ current_genre|default:'' }}&sort={{ request.GET.sort }}&order={{ request.GET.order }}">Suivant</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link text-dark" href="?page={{ page_obj.paginator.num_pages }}&genre={{ current_genre|default:'' }}&sort={{ request.GET.sort }}&order={{ request.GET.order }}">Fin</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </main>
+</div>
+{% endblock %}
